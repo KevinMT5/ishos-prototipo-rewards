@@ -1,0 +1,11 @@
+{
+  "appId": "com.ishos.rewards",
+  "appName": "Isho's Rewards",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

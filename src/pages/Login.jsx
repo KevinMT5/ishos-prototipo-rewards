@@ -15,7 +15,13 @@ export default function Login() {
         }}>
             {/* Logo / hero */}
             <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-                <div style={{ fontSize: '80px', marginBottom: '16px' }}>🍧</div>
+                {/* Reemplazamos el div del emoji por la etiqueta img */}
+                <img
+                    src="/logo.png"
+                    alt="Isho's Factory Logo"
+                    style={{ height: '80px', marginBottom: '16px', objectFit: 'contain' }}
+                />
+
                 <h1 style={{
                     fontFamily: 'Cormorant Garamond,serif',
                     fontSize: '42px',
@@ -30,14 +36,13 @@ export default function Login() {
                     Acumula puntos en cada visita y canjea premios exclusivos
                 </p>
             </div>
-
             {/* Beneficios */}
             <div style={{ width: '100%', maxWidth: '320px', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
                 {[
-                    { icon: '🎁', text: 'Gana puntos en cada compra' },
-                    { icon: '🏆', text: 'Sube de nivel: Bronce → Diamante' },
-                    { icon: '⬛', text: 'Tu QR personal para acumular' },
-                    { icon: '✨', text: 'Canjea premios y sabores exclusivos' },
+                    { icon: '', text: 'Gana puntos en cada compra' },
+                    { icon: '', text: 'Sube de nivel: Bronce → Diamante' },
+                    { icon: '', text: 'Tu QR personal para acumular' },
+                    { icon: '', text: 'Canjea premios y sabores exclusivos' },
                 ].map((b, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <span style={{ fontSize: '20px' }}>{b.icon}</span>
