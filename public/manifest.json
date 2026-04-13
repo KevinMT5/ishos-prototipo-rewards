@@ -1,0 +1,22 @@
+{
+    "name": "Isho's Rewards",
+    "short_name": "Isho's",
+    "description": "Acumula puntos y canjea premios en Isho's Factory",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#FFFBF5",
+    "theme_color": "#2BBFAA",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
