@@ -1,7 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
+// 1. Agregamos las importaciones necesarias de Firebase Auth y Capacitor
+import { onAuthStateChanged, signInWithPopup, signOut, GoogleAuthProvider, signInWithCredential } from 'firebase/auth'
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, provider, db } from '../firebase/config'
+import { Capacitor } from '@capacitor/core'
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth'
 
 const AuthContext = createContext(null)
 
@@ -43,19 +46,38 @@ export function AuthProvider({ children }) {
                 level: 'Bronce',
                 visits: 0,
                 joinedAt: serverTimestamp(),
-                favoriteFlavorr: null,
+                favoriteFlavor: null, // (Corregí un pequeño error tipográfico aquí que decía 'favoriteFlavorr')
             }
             await setDoc(ref, newProfile)
             setProfile(newProfile)
         }
     }
 
-    // Login con Google
+    // 2. Modificamos el Login con Google para que sea híbrido (Web / Android)
     async function loginWithGoogle() {
         try {
-            await signInWithPopup(auth, provider)
+            const platform = Capacitor.getPlatform()
+
+            if (platform === 'android' || platform === 'ios') {
+                // 📱 RUTA NATIVA (Para el celular)
+                await GoogleAuth.initialize({
+                    clientId: '948193083003-o2b78hm417i4mlhhr25vqijrladm8s1k.apps.googleusercontent.com',
+                    scopes: ['profile', 'email'],
+                    grantOfflineAccess: true,
+                })
+                
+                const googleUser = await GoogleAuth.signIn()
+                const credential = GoogleAuthProvider.credential(googleUser.authentication.idToken)
+                await signInWithCredential(auth, credential)
+
+            } else {
+                // 💻 RUTA WEB (Para la computadora)
+                await signInWithPopup(auth, provider)
+            }
         } catch (err) {
             console.error('Login error:', err)
+            // Agregamos una alerta para que si falla en el celular, nos diga por qué
+            alert("Error al iniciar sesión: " + JSON.stringify(err))
         }
     }
 

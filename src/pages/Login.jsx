@@ -1,4 +1,6 @@
 import { useAuth } from '../context/AuthContext'
+// 1. Importamos los íconos
+import { Star, Award, QrCode, Gift } from 'lucide-react'
 
 export default function Login() {
     const { loginWithGoogle } = useAuth()
@@ -15,11 +17,10 @@ export default function Login() {
         }}>
             {/* Logo / hero */}
             <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-                {/* Reemplazamos el div del emoji por la etiqueta img */}
                 <img
                     src="/logo.png"
                     alt="Isho's Factory Logo"
-                    style={{ height: '80px', marginBottom: '16px', objectFit: 'contain' }}
+                    style={{ height: '100px', marginBottom: '16px', objectFit: 'contain' }}
                 />
 
                 <h1 style={{
@@ -30,25 +31,33 @@ export default function Login() {
                     lineHeight: 1.1,
                     marginBottom: '8px',
                 }}>
-                    Isho's <span style={{ color: '#FF8C42' }}>Rewards</span>
+                    <span style={{ color: '#FF8C42' }}>Rewards</span>
                 </h1>
                 <p style={{ fontSize: '16px', color: '#78716C', lineHeight: 1.6, maxWidth: '280px', margin: '0 auto' }}>
                     Acumula puntos en cada visita y canjea premios exclusivos
                 </p>
             </div>
+
             {/* Beneficios */}
             <div style={{ width: '100%', maxWidth: '320px', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
                 {[
-                    { icon: '', text: 'Gana puntos en cada compra' },
-                    { icon: '', text: 'Sube de nivel: Bronce → Diamante' },
-                    { icon: '', text: 'Tu QR personal para acumular' },
-                    { icon: '', text: 'Canjea premios y sabores exclusivos' },
-                ].map((b, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <span style={{ fontSize: '20px' }}>{b.icon}</span>
-                        <span style={{ fontSize: '14px', color: '#78716C' }}>{b.text}</span>
-                    </div>
-                ))}
+                    // 2. Colocamos los componentes de íconos en lugar de texto vacío
+                    { icon: Star, text: 'Gana puntos en cada compra' },
+                    { icon: Award, text: 'Sube de nivel: Bronce → Diamante' },
+                    { icon: QrCode, text: 'Tu QR personal para acumular' },
+                    { icon: Gift, text: 'Canjea premios y sabores exclusivos' },
+                ].map((b, i) => {
+                    // 3. Renderizamos el ícono
+                    const IconComponent = b.icon;
+                    return (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ color: '#2BBFAA', display: 'flex', alignItems: 'center' }}>
+                                <IconComponent size={22} strokeWidth={2.5} />
+                            </div>
+                            <span style={{ fontSize: '14px', color: '#78716C', fontWeight: '500' }}>{b.text}</span>
+                        </div>
+                    );
+                })}
             </div>
 
             {/* Botón login */}

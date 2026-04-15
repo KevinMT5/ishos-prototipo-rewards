@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext'
 import { usePoints } from '../hooks/usePoints'
 import ProgressRing from '../components/ProgressRing'
 import QRCode from '../components/QRCode'
+// 1. Importamos los nuevos íconos
+import { Gift, QrCode, Sparkles } from 'lucide-react'
 
 const LEVEL_COLOR = { Bronce: '#CD7F32', Plata: '#9E9E9E', Oro: '#FF8C42', Diamante: '#2BBFAA' }
 const NEXT_THRESHOLD = { Bronce: 100, Plata: 300, Oro: 600, Diamante: 600 }
@@ -62,7 +64,8 @@ export default function Home() {
                             gap: '6px',
                         }}
                     >
-                        ⬛ {showQR ? 'Ocultar' : 'Mi QR'}
+                        {/* 2. Actualizamos el ícono del botón pequeño de QR */}
+                        <QrCode size={14} /> {showQR ? 'Ocultar' : 'Mi QR'}
                     </button>
                 </div>
 
@@ -117,30 +120,39 @@ export default function Home() {
                 </p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     {[
-                        { icon: '🎁', label: 'Mis premios', sub: '6 disponibles', color: '#E8F8F5', accent: '#2BBFAA', href: '/rewards' },
-                        { icon: '⬛', label: 'Código QR', sub: 'Para acumular', color: '#FFF4EC', accent: '#FF8C42', action: () => setShowQR(true) },
-                    ].map((a, i) => (
-                        <button
-                            key={i}
-                            onClick={a.action}
-                            style={{
-                                background: a.color,
-                                border: 'none',
-                                borderRadius: '16px',
-                                padding: '16px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '6px',
-                                cursor: 'pointer',
-                                textAlign: 'left',
-                                WebkitTapHighlightColor: 'transparent',
-                            }}
-                        >
-                            <span style={{ fontSize: '24px' }}>{a.icon}</span>
-                            <span style={{ fontSize: '13px', fontWeight: '600', color: '#1C1917' }}>{a.label}</span>
-                            <span style={{ fontSize: '11px', color: a.accent, fontWeight: '500' }}>{a.sub}</span>
-                        </button>
-                    ))}
+                        // 3. Reemplazamos los emojis por los componentes de íconos en el arreglo
+                        { icon: Gift, label: 'Mis premios', sub: '6 disponibles', color: '#E8F8F5', accent: '#2BBFAA', href: '/rewards' },
+                        { icon: QrCode, label: 'Código QR', sub: 'Para acumular', color: '#FFF4EC', accent: '#FF8C42', action: () => setShowQR(true) },
+                    ].map((a, i) => {
+                        const IconComponent = a.icon;
+                        return (
+                            <button
+                                key={i}
+                                onClick={a.action}
+                                style={{
+                                    background: a.color,
+                                    border: 'none',
+                                    borderRadius: '16px',
+                                    padding: '16px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '8px',
+                                    cursor: 'pointer',
+                                    textAlign: 'left',
+                                    WebkitTapHighlightColor: 'transparent',
+                                }}
+                            >
+                                {/* 4. Renderizamos el ícono con su color de acento */}
+                                <div style={{ color: a.accent }}>
+                                    <IconComponent size={28} strokeWidth={2} />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                    <span style={{ fontSize: '13px', fontWeight: '600', color: '#1C1917' }}>{a.label}</span>
+                                    <span style={{ fontSize: '11px', color: a.accent, fontWeight: '500' }}>{a.sub}</span>
+                                </div>
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
 
@@ -158,8 +170,9 @@ export default function Home() {
                     alignItems: 'center',
                     gap: '14px',
                 }}>
-                    <div style={{ width: '56px', height: '56px', background: '#E8F8F5', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', flexShrink: 0 }}>
-                        🍧
+                    <div style={{ width: '56px', height: '56px', background: '#E8F8F5', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#2BBFAA' }}>
+                        {/* 5. Reemplazamos el emoji de sorbete por el ícono Sparkles */}
+                        <Sparkles size={28} strokeWidth={2} />
                     </div>
                     <div style={{ flex: 1 }}>
                         <p style={{ fontSize: '14px', fontWeight: '600', color: '#1C1917', marginBottom: '2px' }}>Sorbete Gratis</p>
