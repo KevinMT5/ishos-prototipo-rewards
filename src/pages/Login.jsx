@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { Star, Award, QrCode, Gift } from 'lucide-react'
+import { Star, Award, QrCode, Gift, ExternalLink, Copy, Check } from 'lucide-react'
 
 const BENEFITS = [
     { icon: Star,   text: 'Gana puntos en cada compra' },
@@ -10,6 +11,38 @@ const BENEFITS = [
 
 export default function Login() {
     const { loginWithGoogle } = useAuth()
+    const [loginNotice, setLoginNotice] = useState(null)
+    const [copyDone, setCopyDone] = useState(false)
+    const [signingIn, setSigningIn] = useState(false)
+
+    const isEmbeddedBrowser = typeof navigator !== 'undefined' &&
+        /FBAN|FBAV|Instagram|WhatsApp|Line\/|MicroMessenger|Snapchat|Twitter/i.test(navigator.userAgent)
+
+    async function handleGoogleLogin() {
+        if (isEmbeddedBrowser) {
+            setLoginNotice('in-app')
+            return
+        }
+
+        setLoginNotice(null)
+        setSigningIn(true)
+        const result = await loginWithGoogle()
+        setSigningIn(false)
+
+        if (result?.success === false) {
+            setLoginNotice('failed')
+        }
+    }
+
+    async function copyAppLink() {
+        try {
+            await navigator.clipboard.writeText(window.location.href)
+            setCopyDone(true)
+            setTimeout(() => setCopyDone(false), 2000)
+        } catch {
+            setLoginNotice('copy-failed')
+        }
+    }
 
     return (
         <div style={{
@@ -18,7 +51,7 @@ export default function Login() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            background: '#FFFBF5',
+            background: 'var(--color-bg)',
             padding: '40px 24px',
             position: 'relative',
             overflow: 'hidden',
@@ -36,6 +69,7 @@ export default function Login() {
                 .login-section:nth-child(2) { animation-delay: 0.1s; }
                 .login-section:nth-child(3) { animation-delay: 0.2s; }
                 .login-btn:active { transform: scale(0.97) !important; }
+                .login-btn:disabled { opacity: 0.65; cursor: wait; }
             `}</style>
 
             {/* Orbes de fondo */}
@@ -140,7 +174,7 @@ export default function Login() {
                                     flexShrink: 0,
                                     boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)',
                                 }}>
-                                    <Icon size={18} color="#2BBFAA" strokeWidth={2.5} />
+                                    <Icon size={18} color="#2F786E" strokeWidth={2.5} />
                                 </div>
                                 <span style={{ fontSize: '14px', color: '#1C1917', fontWeight: '500', lineHeight: 1.4 }}>
                                     {b.text}
@@ -154,15 +188,16 @@ export default function Login() {
             {/* ── Botón Google ── */}
             <div className="login-section" style={{ width: '100%', maxWidth: '340px' }}>
                 <button
-                    onClick={loginWithGoogle}
+                    onClick={handleGoogleLogin}
+                    disabled={signingIn}
                     className="login-btn"
                     style={{
                         width: '100%',
                         padding: '16px 24px',
                         borderRadius: '20px',
                         border: 'none',
-                        background: 'linear-gradient(135deg, #2BBFAA, #1A8F7D)',
-                        color: 'white',
+                        background: 'linear-gradient(135deg, #78D8CA, #52BFAF)',
+                        color: '#173F39',
                         fontSize: '16px',
                         fontWeight: '600',
                         cursor: 'pointer',
@@ -170,7 +205,7 @@ export default function Login() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '10px',
-                        boxShadow: '0 8px 32px rgba(43,191,170,0.35), inset 0 1px 0 rgba(255,255,255,0.2)',
+                        boxShadow: '0 8px 32px rgba(82,191,175,0.25), inset 0 1px 0 rgba(255,255,255,0.3)',
                         WebkitTapHighlightColor: 'transparent',
                         transition: 'transform 0.2s, box-shadow 0.2s',
                         position: 'relative', overflow: 'hidden',
@@ -188,11 +223,52 @@ export default function Login() {
                         <path fill="rgba(255,255,255,0.6)" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                         <path fill="rgba(255,255,255,0.9)" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                     </svg>
-                    <span style={{ position: 'relative' }}>Entrar con Google</span>
+                    <span style={{ position: 'relative' }}>{signingIn ? 'Abriendo Google...' : 'Entrar con Google'}</span>
                 </button>
 
+                {loginNotice === 'in-app' && (
+                    <div style={{
+                        marginTop: '14px', padding: '14px',
+                        borderRadius: '16px',
+                        background: 'rgba(255,140,66,0.09)',
+                        border: '1px solid rgba(255,140,66,0.22)',
+                        color: '#78716C', fontSize: '12px', lineHeight: 1.5,
+                    }}>
+                        <p style={{ color: '#1C1917', fontWeight: '700', marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <ExternalLink size={14} color="#FF8C42" /> Abre la app fuera de WhatsApp
+                        </p>
+                        <p>En iPhone toca el botón de compartir y elige <strong>Abrir en Safari</strong>. En Android usa el menú ⋮ y selecciona <strong>Abrir en Chrome</strong>.</p>
+                        <button
+                            type="button"
+                            onClick={copyAppLink}
+                            style={{
+                                marginTop: '10px', padding: '8px 12px',
+                                borderRadius: '10px', border: 'none',
+                                background: 'rgba(255,140,66,0.13)', color: '#E67332',
+                                fontSize: '12px', fontWeight: '700',
+                                display: 'flex', alignItems: 'center', gap: '6px',
+                            }}
+                        >
+                            {copyDone ? <Check size={13} /> : <Copy size={13} />}
+                            {copyDone ? 'Enlace copiado' : 'Copiar enlace'}
+                        </button>
+                    </div>
+                )}
+
+                {loginNotice === 'failed' && (
+                    <p style={{ marginTop: '12px', color: '#E67332', fontSize: '12px', textAlign: 'center', lineHeight: 1.45 }}>
+                        No se pudo abrir Google. Intenta nuevamente desde Safari o Chrome.
+                    </p>
+                )}
+
+                {loginNotice === 'copy-failed' && (
+                    <p style={{ marginTop: '12px', color: '#E67332', fontSize: '12px', textAlign: 'center' }}>
+                        Mantén presionada la barra de dirección para copiar el enlace.
+                    </p>
+                )}
+
                 <p style={{
-                    fontSize: '12px', color: '#A8A29E',
+                    fontSize: '12px', color: '#57534E',
                     marginTop: '16px', textAlign: 'center', lineHeight: 1.5,
                 }}>
                     Al ingresar aceptas recibir comunicaciones de Isho's Factory

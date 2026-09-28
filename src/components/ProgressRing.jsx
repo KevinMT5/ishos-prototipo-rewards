@@ -8,11 +8,11 @@ export default function ProgressRing({ pts, max, size = 120 }) {
         <svg width={size} height={size} style={{ transform: 'rotate(-90deg)', display: 'block' }}>
             <circle
                 cx={size / 2} cy={size / 2} r={r}
-                fill="none" stroke="#F5EDE4" strokeWidth="10"
+                fill="none" stroke="#E4EFEC" strokeWidth="10"
             />
             <circle
                 cx={size / 2} cy={size / 2} r={r}
-                fill="none" stroke="#2BBFAA" strokeWidth="10"
+                fill="none" stroke="#66CFC0" strokeWidth="10"
                 strokeDasharray={`${dash} ${circ}`}
                 strokeLinecap="round"
                 style={{ transition: 'stroke-dasharray 0.8s ease' }}

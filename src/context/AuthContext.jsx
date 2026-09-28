@@ -32,9 +32,19 @@ export function AuthProvider({ children }) {
     async function loadProfile(uid, firebaseUser) {
         const ref = doc(db, 'users', uid)
         const snap = await getDoc(ref)
+        const rewardCode = `ISHOS-${uid.slice(0, 8).toUpperCase()}`
 
         if (snap.exists()) {
-            setProfile(snap.data())
+            const existingProfile = snap.data()
+            setProfile({ ...existingProfile, rewardCode })
+
+            // Migra perfiles existentes para que el panel del personal pueda
+            // localizar al cliente usando el código corto que ve en la app.
+            if (existingProfile.rewardCode !== rewardCode) {
+                setDoc(ref, { rewardCode }, { merge: true }).catch((err) => {
+                    console.error('No se pudo guardar el código de recompensas:', err)
+                })
+            }
         } else {
             // Primera vez: crear perfil con 0 puntos
             const newProfile = {
@@ -45,6 +55,7 @@ export function AuthProvider({ children }) {
                 points: 0,
                 level: 'Bronce',
                 visits: 0,
+                rewardCode,
                 joinedAt: serverTimestamp(),
                 favoriteFlavor: null, // (Corregí un pequeño error tipográfico aquí que decía 'favoriteFlavorr')
             }
@@ -76,9 +87,10 @@ export function AuthProvider({ children }) {
             }
         } catch (err) {
             console.error('Login error:', err)
-            // Agregamos una alerta para que si falla en el celular, nos diga por qué
-            alert("Error al iniciar sesión: " + JSON.stringify(err))
+            return { success: false, error: err }
         }
+
+        return { success: true }
     }
 
     // Cerrar sesión

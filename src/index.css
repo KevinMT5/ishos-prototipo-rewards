@@ -1,56 +1,58 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
+:root {
+  --color-primary: #66CFC0;
+  --color-primary-dark: #46B5A5;
+  --color-primary-ink: #2F786E;
+  --color-primary-soft: #E8F9F6;
+  --color-accent: #E51E8C;
+  --color-accent-dark: #C95616;
+  --color-accent-soft: #FCE9F4;
+  --color-bg: #FBF9FC;
+  --color-surface: #FFFFFF;
+  --color-border: #E8DED3;
+  --color-text: #1C1917;
+  --color-text-secondary: #57534E;
+  --color-text-muted: #78716C;
+  --shadow-card: 0 8px 28px rgba(75, 57, 41, 0.08);
+  --shadow-raised: 0 14px 38px rgba(28, 25, 23, 0.16);
+  --radius-card: 24px;
 }
 
-html {
-  font-size: 16px;
-  touch-action: manipulation;
-}
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { font-size: 16px; touch-action: manipulation; background: var(--color-bg); }
 body {
-  font-family: 'Outfit', system-ui, sans-serif;
-  background: #FFFBF5;
-  color: #1C1917;
+  min-width: 320px;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at 100% 0%, rgba(82,198,181,.12), transparent 28rem), radial-gradient(circle at 0% 100%, rgba(231,29,140,.06), transparent 26rem), var(--color-bg);
+  color: var(--color-text);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+button, input, select, textarea { font: inherit; }
+button, a { user-select: none; -webkit-user-select: none; }
+button { touch-action: manipulation; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid rgba(82,198,181,.35); outline-offset: 3px; }
 #root {
-  /* Respeta Dynamic Island, notch y barra de home en todos los dispositivos */
   padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
   min-height: 100dvh;
 }
-
-/* Ocultar scrollbar pero mantener funcionalidad */
-* {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+.app-shell { width: 100%; max-width: 460px; min-height: 100dvh; margin: 0 auto; position: relative; }
+.app-content { min-height: 100dvh; }
+.page { min-height: 100dvh; padding: 20px 18px calc(112px + env(safe-area-inset-bottom, 0px)); }
+.page-header { margin-bottom: 20px; }
+.page-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: clamp(2rem, 8vw, 2.35rem); line-height: 1; letter-spacing: -.025em; color: var(--color-text); }
+.page-subtitle { margin-top: 7px; font-size: .875rem; color: var(--color-text-secondary); line-height: 1.45; }
+.section-label { margin: 0 2px 11px; color: var(--color-text-secondary); font-size: .75rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+.surface-card { background: rgba(255,255,255,.9); border: 1px solid rgba(232,222,211,.9); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+.interactive-card { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.interactive-card:active { transform: scale(.98); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (min-width: 700px) {
+  .app-shell { margin-block: 16px; min-height: calc(100dvh - 32px); border-radius: 34px; overflow: hidden; box-shadow: 0 22px 70px rgba(64,48,35,.12); }
+  .page { min-height: calc(100dvh - 32px); }
 }
-
-*::-webkit-scrollbar {
-  display: none;
-}
-
-/* Prevenir selección accidental en móvil */
-button,
-a {
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-/* Inputs sin zoom en iOS */
-input,
-select,
-textarea {
-  font-size: 16px;
-  font-family: 'Outfit', system-ui, sans-serif;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }

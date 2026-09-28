@@ -1,17 +1,8 @@
 import { useEffect, useState } from 'react'
-import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore'
+import { collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { useAuth } from '../context/AuthContext'
-import { IceCreamBowl, Gift, TrendingUp, TrendingDown } from 'lucide-react'
-
-const DEMO = [
-    { id: '1', type: 'earn',   description: 'Mango con Chile + Granola',      points: 25,  createdAt: { toDate: () => new Date('2026-04-12') } },
-    { id: '2', type: 'earn',   description: 'Pitahaya Rosa (Vaso Grande)',     points: 35,  createdAt: { toDate: () => new Date('2026-04-10') } },
-    { id: '3', type: 'redeem', description: 'Canjeaste: Topping Premium',      points: -80, createdAt: { toDate: () => new Date('2026-04-08') } },
-    { id: '4', type: 'earn',   description: 'Taro Mágico + Frutas Frescas',   points: 30,  createdAt: { toDate: () => new Date('2026-04-05') } },
-    { id: '5', type: 'earn',   description: 'Fresa Natural',                  points: 20,  createdAt: { toDate: () => new Date('2026-04-02') } },
-    { id: '6', type: 'earn',   description: 'Jabuticaba (2 vasos)',            points: 50,  createdAt: { toDate: () => new Date('2026-03-28') } },
-]
+import { IceCreamBowl, Gift, TrendingUp, TrendingDown, ReceiptText, AlertCircle } from 'lucide-react'
 
 function formatDate(ts) {
     try {
@@ -20,25 +11,38 @@ function formatDate(ts) {
     } catch { return '—' }
 }
 
+function timestampMillis(value) {
+    if (value?.toMillis) return value.toMillis()
+    if (value?.toDate) return value.toDate().getTime()
+    const millis = new Date(value || 0).getTime()
+    return Number.isNaN(millis) ? 0 : millis
+}
+
 export default function History() {
     const { user } = useAuth()
     const [transactions, setTransactions] = useState([])
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
 
     useEffect(() => {
         if (!user) return
         async function load() {
+            setLoading(true)
+            setError(false)
             try {
                 const q = query(
                     collection(db, 'transactions'),
-                    where('userId', '==', user.uid),
-                    orderBy('createdAt', 'desc'),
-                    limit(30)
+                    where('userId', '==', user.uid)
                 )
                 const snap = await getDocs(q)
-                setTransactions(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+                const rows = snap.docs
+                    .map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => timestampMillis(b.createdAt) - timestampMillis(a.createdAt))
+                    .slice(0, 30)
+                setTransactions(rows)
             } catch (err) {
                 console.error(err)
+                setError(true)
             } finally {
                 setLoading(false)
             }
@@ -46,29 +50,18 @@ export default function History() {
         load()
     }, [user])
 
-    const data = transactions.length > 0 ? transactions : DEMO
+    const data = transactions
 
     const totalGanado  = data.filter(t => t.type === 'earn').reduce((a, t) => a + t.points, 0)
     const totalCanjeado = Math.abs(data.filter(t => t.type === 'redeem').reduce((a, t) => a + t.points, 0))
 
     return (
-        <div style={{
-            padding: '16px',
-            paddingBottom: '100px',
-            background: '#FFFBF5',
-            minHeight: '100dvh',
-        }}>
+        <div className="page">
 
             {/* Header */}
-            <div style={{ marginBottom: '20px' }}>
-                <h1 style={{
-                    fontFamily: 'Cormorant Garamond, serif',
-                    fontSize: '28px', fontWeight: '700',
-                    color: '#1C1917', marginBottom: '4px',
-                }}>
-                    Historial
-                </h1>
-                <p style={{ fontSize: '13px', color: '#78716C' }}>
+            <div className="page-header">
+                <h1 className="page-title">Historial</h1>
+                <p className="page-subtitle">
                     Tus visitas y canjes recientes
                 </p>
             </div>
@@ -76,8 +69,8 @@ export default function History() {
             {/* ── Stats resumen ── */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
                 {[
-                    { label: 'Puntos ganados', val: `+${totalGanado}`, icon: TrendingUp,   tint: 'rgba(43,191,170,0.08)',  border: 'rgba(43,191,170,0.18)',  accent: '#2BBFAA' },
-                    { label: 'Puntos canjeados', val: `-${totalCanjeado}`, icon: TrendingDown, tint: 'rgba(255,140,66,0.08)', border: 'rgba(255,140,66,0.18)',  accent: '#FF8C42' },
+                    { label: 'Puntos ganados', val: `+${totalGanado}`, icon: TrendingUp, tint: '#F0FAF7', border: '#CDEBE4', accent: '#2F786E' },
+                    { label: 'Puntos canjeados', val: `-${totalCanjeado}`, icon: TrendingDown, tint: '#FFF4EA', border: '#F6DCC8', accent: '#C95616' },
                 ].map((s, i) => {
                     const Icon = s.icon
                     return (
@@ -117,9 +110,23 @@ export default function History() {
             {loading ? (
                 <div style={{
                     textAlign: 'center', padding: '40px 0',
-                    color: '#A8A29E', fontSize: '14px',
+                    color: '#57534E', fontSize: '14px',
                 }}>
                     Cargando...
+                </div>
+            ) : error ? (
+                <div className="surface-card" style={{ textAlign: 'center', padding: '36px 24px' }}>
+                    <AlertCircle size={32} color="#C95616" style={{ marginBottom: 10 }} />
+                    <p style={{ fontWeight: 700, marginBottom: 5 }}>No pudimos cargar tu historial</p>
+                    <p style={{ color: '#57534E', fontSize: 13, lineHeight: 1.5 }}>Revisa tu conexión e inténtalo nuevamente.</p>
+                </div>
+            ) : data.length === 0 ? (
+                <div className="surface-card" style={{ textAlign: 'center', padding: '38px 24px' }}>
+                    <div style={{ width: 58, height: 58, borderRadius: 18, background: '#E8F9F6', color: '#2F786E', display: 'grid', placeItems: 'center', margin: '0 auto 14px' }}>
+                        <ReceiptText size={27} />
+                    </div>
+                    <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Tu historial está listo para comenzar</p>
+                    <p style={{ color: '#57534E', fontSize: 13, lineHeight: 1.5 }}>Cuando acumules o canjees puntos, verás los movimientos aquí.</p>
                 </div>
             ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -165,7 +172,7 @@ export default function History() {
                                     }}>
                                         <Icon
                                             size={18}
-                                            color={isEarn ? '#2BBFAA' : '#FF8C42'}
+                                            color={isEarn ? '#2F786E' : '#C95616'}
                                             strokeWidth={2}
                                         />
                                     </div>
@@ -180,7 +187,7 @@ export default function History() {
                                         }}>
                                             {tx.description}
                                         </p>
-                                        <p style={{ fontSize: '11px', color: '#A8A29E' }}>
+                                        <p style={{ fontSize: '11px', color: '#57534E' }}>
                                             {formatDate(tx.createdAt)}
                                         </p>
                                     </div>
@@ -197,7 +204,7 @@ export default function History() {
                                 }}>
                                     <span style={{
                                         fontSize: '13px', fontWeight: '700',
-                                        color: isEarn ? '#2BBFAA' : '#FF8C42',
+                                        color: isEarn ? '#2F786E' : '#C95616',
                                     }}>
                                         {isEarn ? '+' : ''}{tx.points}
                                     </span>

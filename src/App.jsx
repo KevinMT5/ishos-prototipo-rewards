@@ -18,12 +18,12 @@ export default function App() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#FFFBF5',
+        background: 'var(--color-bg)',
         flexDirection: 'column',
         gap: '16px',
       }}>
         <span style={{ fontSize: '48px', animation: 'spin 1s linear infinite' }}>🍧</span>
-        <p style={{ fontSize: '14px', color: '#A8A29E' }}>Cargando...</p>
+        <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>Preparando tu cuenta...</p>
         <style>{`@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}`}</style>
       </div>
     )
@@ -34,16 +34,8 @@ export default function App() {
 
   // Sesión activa → App principal
   return (
-    <div style={{
-      maxWidth: '430px',
-      margin: '0 auto',
-      minHeight: '100svh',
-      background: '#FFFBF5',
-      position: 'relative',
-      fontFamily: "'Outfit', system-ui, sans-serif",
-    }}>
-      {/* Contenido con espacio para el bottom nav */}
-      <div style={{ paddingBottom: '80px' }}>
+    <div className="app-shell">
+      <main className="app-content">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/rewards" element={<Rewards />} />
@@ -51,7 +43,7 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </div>
+      </main>
 
       <BottomNav />
     </div>

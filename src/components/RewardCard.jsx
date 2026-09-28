@@ -17,6 +17,8 @@ export default function RewardCard({ reward, userPoints, onSelect, redeemed }) {
     return (
         <button
             onClick={() => !isDone && onSelect(reward)}
+            className="interactive-card"
+            aria-label={`${reward.name}, ${reward.pts} puntos${canRedeem ? ', disponible' : ', aún no disponible'}`}
             style={{
                 background: isDone
                     ? 'rgba(245,237,228,0.6)'
@@ -30,6 +32,8 @@ export default function RewardCard({ reward, userPoints, onSelect, redeemed }) {
                         : 'rgba(255,255,255,0.85)'}`,
                 borderRadius: '20px',
                 padding: '16px',
+                minHeight: '188px',
+                display: 'flex', flexDirection: 'column',
                 cursor: isDone ? 'default' : 'pointer',
                 textAlign: 'left',
                 transition: 'all 0.25s',
@@ -55,7 +59,7 @@ export default function RewardCard({ reward, userPoints, onSelect, redeemed }) {
                 <div style={{
                     position: 'absolute', top: '10px', right: '10px',
                     width: '20px', height: '20px',
-                    background: '#2BBFAA', borderRadius: '50%',
+                    background: '#52BFAF', borderRadius: '50%',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '10px', color: 'white', fontWeight: '700',
                 }}>✓</div>
@@ -74,22 +78,22 @@ export default function RewardCard({ reward, userPoints, onSelect, redeemed }) {
             }}>
                 <Icon
                     size={22}
-                    color={isDone ? '#A8A29E' : reward.accent}
+                    color={isDone ? '#78716C' : reward.accent}
                     strokeWidth={2}
                 />
             </div>
 
             <p style={{
                 fontSize: '13px', fontWeight: '700',
-                color: isDone ? '#A8A29E' : '#1C1917',
+                color: isDone ? '#78716C' : '#1C1917',
                 marginBottom: '3px', lineHeight: 1.2,
                 position: 'relative',
             }}>
                 {reward.name}
             </p>
             <p style={{
-                fontSize: '11px', color: '#A8A29E',
-                marginBottom: '10px', lineHeight: 1.3,
+                fontSize: '11px', color: '#57534E',
+                marginBottom: '12px', lineHeight: 1.35, flex: 1,
                 position: 'relative',
             }}>
                 {reward.desc}
@@ -102,8 +106,8 @@ export default function RewardCard({ reward, userPoints, onSelect, redeemed }) {
                         ? `${reward.accent}18`
                         : 'rgba(232,224,216,0.8)',
                 color: isDone
-                    ? '#A8A29E'
-                    : canRedeem ? reward.accent : '#A8A29E',
+                    ? '#78716C'
+                    : canRedeem ? reward.accent : '#57534E',
                 border: `1px solid ${isDone || !canRedeem ? 'transparent' : `${reward.accent}30`}`,
                 padding: '4px 10px',
                 borderRadius: '100px',

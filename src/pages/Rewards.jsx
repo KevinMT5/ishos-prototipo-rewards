@@ -4,9 +4,9 @@ import RewardCard from '../components/RewardCard'
 import { X, IceCreamBowl, Citrus, CupSoda, Tag, Users, Sparkles } from 'lucide-react'
 
 const REWARDS = [
-    { id: 'r1', name: 'Sorbete Gratis',     pts: 150, icon: IceCreamBowl, desc: 'Un vaso pequeño de cualquier sabor', color: '#E8F8F5', accent: '#2BBFAA' },
-    { id: 'r2', name: 'Topping Premium',    pts: 80,  icon: Citrus,        desc: 'Agrega el topping que quieras',      color: '#FFF4EC', accent: '#FF8C42' },
-    { id: 'r3', name: 'Vaso Grande Gratis', pts: 200, icon: CupSoda,       desc: 'Upgrade a vaso grande',              color: '#fce4ec', accent: '#E91E8C' },
+    { id: 'r1', name: 'Sorbete Gratis',     pts: 150, icon: IceCreamBowl, desc: 'Un vaso pequeño de cualquier sabor', color: '#E8F8F5', accent: '#2F8F82' },
+    { id: 'r2', name: 'Topping Premium',    pts: 80,  icon: Citrus,        desc: 'Agrega el topping que quieras',      color: '#FFF4EC', accent: '#C95616' },
+    { id: 'r3', name: 'Vaso Grande Gratis', pts: 200, icon: CupSoda,       desc: 'Cambia tu pedido a vaso grande',      color: '#fce4ec', accent: '#B4236A' },
     { id: 'r4', name: '10% Descuento',      pts: 60,  icon: Tag,           desc: 'En tu próxima compra',               color: '#f3e5f5', accent: '#9B7BB8' },
     { id: 'r5', name: 'Combo 2x1',          pts: 300, icon: Users,         desc: 'Trae a un amigo, paga uno',          color: '#E8F8F5', accent: '#1A8F7D' },
     { id: 'r6', name: 'Sabor Exclusivo',    pts: 120, icon: Sparkles,      desc: 'Acceso a sabores de temporada',      color: '#FFF4EC', accent: '#E67332' },
@@ -19,7 +19,7 @@ export default function Rewards() {
     const [toast,    setToast]    = useState(null)
     const [loading,  setLoading]  = useState(false)
 
-    function showToast(msg, color = '#2BBFAA') {
+    function showToast(msg, color = '#52BFAF') {
         setToast({ msg, color })
         setTimeout(() => setToast(null), 2500)
     }
@@ -42,13 +42,7 @@ export default function Rewards() {
     const canRedeem    = selected && points >= selected.pts
 
     return (
-        <div style={{
-            padding: '16px',
-            paddingBottom: '100px',
-            background: '#FFFBF5',
-            minHeight: '100dvh',
-            position: 'relative',
-        }}>
+        <div className="page" style={{ position: 'relative' }}>
             <style>{`
                 @keyframes fadeIn {
                     from { opacity:0; transform:translateY(-8px); }
@@ -61,16 +55,10 @@ export default function Rewards() {
             `}</style>
 
             {/* Header */}
-            <div style={{ marginBottom: '16px' }}>
-                <h1 style={{
-                    fontFamily: 'Cormorant Garamond, serif',
-                    fontSize: '28px', fontWeight: '700',
-                    color: '#1C1917', marginBottom: '4px',
-                }}>
-                    Premios
-                </h1>
-                <p style={{ fontSize: '13px', color: '#78716C' }}>
-                    Tu saldo: <strong style={{ color: '#2BBFAA' }}>{points} puntos</strong>
+            <div className="page-header">
+                <h1 className="page-title">Premios</h1>
+                <p className="page-subtitle">
+                    Tu saldo: <strong style={{ color: '#2F786E' }}>{points} puntos</strong>
                 </p>
             </div>
 
@@ -98,7 +86,7 @@ export default function Rewards() {
                         WebkitBackdropFilter: 'blur(4px)',
                         display: 'flex',
                         alignItems: 'flex-end',
-                        zIndex: 400,
+                        zIndex: 1200,
                     }}
                 >
                     <div
@@ -111,9 +99,11 @@ export default function Rewards() {
                             padding: '24px',
                             paddingBottom: 'calc(24px + env(safe-area-inset-bottom, 16px))',
                             width: '100%',
+                            maxWidth: '460px',
+                            margin: '0 auto',
                             maxHeight: '72vh',
                             overflowY: 'auto',
-                            marginBottom: '84px',
+                            marginBottom: 0,
                             border: '1px solid rgba(255,255,255,0.9)',
                             borderBottom: 'none',
                             boxShadow: 'inset 0 1.5px 0 rgba(255,255,255,1), 0 -8px 40px rgba(0,0,0,0.12)',
@@ -140,6 +130,7 @@ export default function Rewards() {
                         {/* Botón cerrar */}
                         <button
                             onClick={() => setSelected(null)}
+                            aria-label="Cerrar detalle del premio"
                             style={{
                                 position: 'absolute', top: '20px', right: '20px',
                                 width: '32px', height: '32px',
@@ -184,7 +175,7 @@ export default function Rewards() {
                         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
                             <span style={{
                                 background: canRedeem ? `${selected.accent}15` : 'rgba(232,224,216,0.8)',
-                                color: canRedeem ? selected.accent : '#A8A29E',
+                                color: canRedeem ? selected.accent : '#57534E',
                                 border: `1px solid ${canRedeem ? `${selected.accent}30` : 'transparent'}`,
                                 padding: '6px 20px',
                                 borderRadius: '100px',
@@ -198,7 +189,7 @@ export default function Rewards() {
                         {!canRedeem && (
                             <p style={{
                                 textAlign: 'center', fontSize: '12px',
-                                color: '#A8A29E', marginBottom: '12px',
+                                color: '#57534E', marginBottom: '12px',
                             }}>
                                 Te faltan {selected.pts - points} puntos para este premio
                             </p>
@@ -215,13 +206,13 @@ export default function Rewards() {
                                 border: 'none',
                                 cursor: canRedeem ? 'pointer' : 'not-allowed',
                                 background: canRedeem
-                                    ? 'linear-gradient(135deg, #2BBFAA, #1A8F7D)'
+                                    ? 'linear-gradient(135deg, #78D8CA, #52BFAF)'
                                     : 'rgba(232,224,216,0.8)',
-                                color: canRedeem ? 'white' : '#A8A29E',
+                                color: canRedeem ? '#173F39' : '#57534E',
                                 fontSize: '16px', fontWeight: '600',
                                 transition: 'all 0.2s',
                                 boxShadow: canRedeem
-                                    ? '0 8px 24px rgba(43,191,170,0.3), inset 0 1px 0 rgba(255,255,255,0.2)'
+                                    ? '0 8px 24px rgba(82,191,175,0.25), inset 0 1px 0 rgba(255,255,255,0.3)'
                                     : 'none',
                                 position: 'relative', overflow: 'hidden',
                             }}
@@ -246,12 +237,12 @@ export default function Rewards() {
                     top: 'calc(20px + env(safe-area-inset-top, 0px))',
                     left: '16px', right: '16px',
                     background: toast.color,
-                    color: 'white',
+                    color: '#173F39',
                     padding: '12px 16px',
                     borderRadius: '14px',
                     fontSize: '14px', fontWeight: '500',
                     textAlign: 'center',
-                    zIndex: 500,
+                    zIndex: 1300,
                     animation: 'fadeIn 0.3s ease',
                     boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
                 }}>
