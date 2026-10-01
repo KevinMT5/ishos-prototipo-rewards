@@ -91,6 +91,7 @@ export default function Rewards() {
                 >
                     <div
                         onClick={e => e.stopPropagation()}
+                        className="reward-sheet"
                         style={{
                             background: 'rgba(255,255,255,0.96)',
                             backdropFilter: 'blur(24px)',

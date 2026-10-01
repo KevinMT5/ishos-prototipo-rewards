@@ -17,7 +17,7 @@ export default function RewardCard({ reward, userPoints, onSelect, redeemed }) {
     return (
         <button
             onClick={() => !isDone && onSelect(reward)}
-            className="interactive-card"
+            className="interactive-card reward-card"
             aria-label={`${reward.name}, ${reward.pts} puntos${canRedeem ? ', disponible' : ', aún no disponible'}`}
             style={{
                 background: isDone

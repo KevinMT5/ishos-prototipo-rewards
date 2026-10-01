@@ -105,8 +105,30 @@ export function AuthProvider({ children }) {
         if (snap.exists()) setProfile(snap.data())
     }
 
+    // Actualiza únicamente la información personal editable del cliente.
+    async function saveProfile(changes) {
+        if (!user) return { success: false, error: 'No autenticado' }
+
+        const allowed = ['name', 'phone', 'birthDate', 'contactEmail', 'photoURL', 'favoriteFlavor']
+        const cleanChanges = Object.fromEntries(
+            Object.entries(changes).filter(([key]) => allowed.includes(key))
+        )
+
+        try {
+            await setDoc(doc(db, 'users', user.uid), {
+                ...cleanChanges,
+                updatedAt: serverTimestamp(),
+            }, { merge: true })
+            setProfile(current => ({ ...current, ...cleanChanges }))
+            return { success: true }
+        } catch (error) {
+            console.error('No se pudo actualizar el perfil:', error)
+            return { success: false, error }
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, profile, loading, loginWithGoogle, logout, refreshProfile }}>
+        <AuthContext.Provider value={{ user, profile, loading, loginWithGoogle, logout, refreshProfile, saveProfile }}>
             {children}
         </AuthContext.Provider>
     )

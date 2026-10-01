@@ -74,7 +74,7 @@ export default function History() {
                 ].map((s, i) => {
                     const Icon = s.icon
                     return (
-                        <div key={i} style={{
+                        <div key={i} className="history-stat" style={{
                             background: s.tint,
                             backdropFilter: 'blur(16px)',
                             WebkitBackdropFilter: 'blur(16px)',
@@ -136,6 +136,7 @@ export default function History() {
                         return (
                             <div
                                 key={tx.id}
+                                className="history-transaction"
                                 style={{
                                     background: 'rgba(255,255,255,0.7)',
                                     backdropFilter: 'blur(20px)',
